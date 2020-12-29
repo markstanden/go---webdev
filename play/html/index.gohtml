@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title> People List </title>
+</head>
+<body>
+  <h1> The people that mean the most </h1>
+  
+  <ul>
+  {{range .}}
+  <h2>
+    <li>{{.Name}}</li>
+  </h2>
+  <h3>
+    <li>Age: {{.Age}}</li>
+    <li>Job: {{.Job}}</li>
+  {{end}}
+</h3>
+</ul>
+</body>
