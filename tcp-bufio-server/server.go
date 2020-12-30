@@ -15,7 +15,7 @@ const (
 
 func main() {
 	//create a tcp listener
-	port := "8080"
+	port := "8000"
 	lisTCP, err := net.Listen("tcp", ":" + port)
 	if err != nil {
 		log.Panicf("Error starting TCP server on port %v: %v", port, err)
@@ -42,7 +42,7 @@ func main() {
 func handle(tcpConn net.Conn) {
 	err := tcpConn.SetDeadline(time.Now().Add(timeout))
 	if err != nil {
-		log.Println("Connection Timeout")
+		fmt.Println("Connection Timeout")
 	}
 	// bufio.NewScanner returns a pointer to a bufio.Scanner struct
 	scanner := bufio.NewScanner(tcpConn)
@@ -51,11 +51,14 @@ func handle(tcpConn net.Conn) {
 	// returns true is successful, false if EOF
 	for scanner.Scan() {
 		line := scanner.Text() // could also use scanner.Bytes()
-		log.Println(line) // print the line of text to the Stdout
-		fmt.Fprintf(tcpConn, "Line Read ok.")
+		fmt.Println(line) // print the line of text to the Stdout
+		fmt.Fprintf(tcpConn, "Message Received")
 
 	}
 
 	// close the tcp connection
-	defer tcpConn.Close()
+	defer func() {
+		fmt.Fprintf(tcpConn, "Closing Connection")
+		tcpConn.Close()
+	}()
 }

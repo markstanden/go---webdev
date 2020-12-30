@@ -8,7 +8,7 @@ import (
 )
 
 var addr string = "localhost"
-var port string = "8080"
+var port string = "8000"
 
 func main() {
 	// creates a Dialer and runs the dial method on it, returning a connection and an error
@@ -18,6 +18,8 @@ func main() {
 	}
 	// close connection once complete
 	defer tcpConn.Close()
+
+	fmt.Fprintln(tcpConn, "Connection Attempt")
 
 	bs, err := ioutil.ReadAll(tcpConn)
 	if err != nil {
