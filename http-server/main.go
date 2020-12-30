@@ -8,12 +8,14 @@ import (
 	"strings"
 )
 
-const port int = 80
+const port string = "8081"
 
 func main() {
-	lis, err := net.Listen("tcp", ":"+port)
+	lis, err := net.Listen("tcp", ":" + port)
 	if err != nil {
 		log.Fatalf("Server failed to start... \n%s", err.Error())
+	} else {
+		log.Printf("Listening on port :%s", port)
 	}
 	defer lis.Close()
 
@@ -43,11 +45,11 @@ func request(conn net.Conn) {
 
 		//parse http request info
 		if i == 0 {
-			m := strings.Fields(line)
+			req := strings.Fields(line)
 			fmt.Println("----------------------")
-			fmt.Printf("Method: %s\n", m[0])
-			fmt.Printf("Route: %s\n", m[1])
-			fmt.Printf("HTTP Version: %s\n", m[2])
+			fmt.Printf("Method: %s\n", req[0])
+			fmt.Printf("Route: %s\n", req[1])
+			fmt.Printf("HTTP Version: %s\n", req[2])
 			fmt.Println("----------------------")
 		}
 
@@ -73,8 +75,10 @@ func respond(conn net.Conn) {
 		</body>
 	</html>`
 
-	fmt.Fprint(conn, "HTTP/1.1 200 OK\r\n")
-	fmt.Fprint(conn, "Content-Length: %d\r\n", len(body))
-	fmt.Fprint(conn, "Content-Type: text/html\r\n")
-	fmt.Fprint(conn, "\r\n")
+	fmt.Fprintf(conn, "HTTP/1.1 200 OK\r\n")
+	fmt.Fprintf(conn, "Content-Length: %d\r\n", len(body))
+	fmt.Fprintf(conn, "Content-Type: text/html\r\n")
+	fmt.Fprintf(conn, "\r\n")
+	fmt.Fprint(conn, body)
 }
+ 
