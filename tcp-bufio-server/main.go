@@ -12,7 +12,7 @@ func main() {
 	port := "8080"
 	lisTCP, err := net.Listen("tcp", ":" + port)
 	if err != nil {
-		log.Printf("Error starting TCP server on port %v: %v", port, err)
+		log.Panic("Error starting TCP server on port %v: %v", port, err)
 	}
 	// close listener when finished
 	defer lisTCP.Close()
