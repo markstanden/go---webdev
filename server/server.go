@@ -2,15 +2,19 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"log"
 	"net"
+	"os"
+	"strings"
 	"sync"
+	"text/template"
 	"time"
 )
 
 var addr string = "localhost"
-var port string = "8000"
+var port string = "8081"
 var timeout = time.Second * 10
 
 var wg sync.WaitGroup
@@ -49,8 +53,10 @@ func handleConnection(conn net.Conn) {
 	}
 
 	var scanner *bufio.Scanner
-
 	scanner = bufio.NewScanner(conn)
+
+	firstLine := true
+	var htmlFileName string
 
 	for scanner.Scan() {
 		// From RFC 2616
@@ -58,37 +64,53 @@ func handleConnection(conn net.Conn) {
 		// HTTP Methods GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH
 		// HTTP-Version   = "HTTP" "/" 1*DIGIT "." 1*DIGIT
 		currentLine := scanner.Text()
+		if firstLine {
+			requestLine := strings.Fields(currentLine)
 
+			fmt.Fprintf(os.Stdout, "\r\n*************************\r\n")
+			fmt.Fprintf(os.Stdout, "Method: %v\r\n", requestLine[0])
+			fmt.Fprintf(os.Stdout, "Route: %v\r\n", requestLine[1])
+			fmt.Fprintf(os.Stdout, "Protocol: %v\r\n", requestLine[2])
+			fmt.Fprintf(os.Stdout, "*************************\r\n")
+
+			if requestLine[0] == "GET" {
+
+			switch requestLine[1] {
+			case "/":
+				htmlFileName = "./index.gohtml"
+			case "/contact":
+				htmlFileName = "./contact.gohtml"
+			}
+		}
 		
-		fmt.Fprintln(conn, currentLine)
-
-
+		} else {
+			fmt.Fprintln(os.Stdout, currentLine)
+		}
 
 		if currentLine == "" {
 			// end of header
 			break
 		}
+
+		firstLine = false
 	}
 
-	respond(conn)
-	log.Println("Response Sent...")
+	if htmlFileName != "" {
+		tplt, err := template.ParseFiles(htmlFileName)
+		if err != nil {
+			log.Panicln("Cannot load html :", err)
+		}
+		var bb bytes.Buffer
+		tplt.Execute(&bb, nil)
+		respond(conn, bb.String())
+	}
+	htmlFileName = ""
 }
 
-func respond(conn net.Conn) {
-	body := `
-	<!DOCTYPE html>
-	<html lang="en">
-		<head>
-			<meta charset="UTF-8">
-			<title> Test Page </title>
-		</head>
-		<body>
-			<h1>Test Page</h1>
-			<p>Hello World!</p>
-		</body>
-	</html>`
-	
+func respond(conn net.Conn, body string) {
 	log.Println("Sending Response...")
+
+	fmt.Fprintf(conn, "\r\n")
 	fmt.Fprintf(conn, "HTTP/1.1 200 OK\r\n")
 	fmt.Fprintf(conn, "Content-Length: %d\r\n", len(body))
 	fmt.Fprintf(conn, "Content-Type: text/html\r\n")
