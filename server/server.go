@@ -78,7 +78,7 @@ func handleConnection(conn net.Conn) {
 			switch requestLine[1] {
 			case "/":
 				htmlFileName = "./index.gohtml"
-			case "/contact":
+			case "/contact": 
 				htmlFileName = "./contact.gohtml"
 			}
 		}
