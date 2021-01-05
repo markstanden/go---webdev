@@ -42,12 +42,10 @@ var hotelList = []hotel{
 }
 
 func main() {
-	mux := http.NewServeMux()
+	http.Handle("/", http.HandlerFunc(rootRoute)) //HandlerFunc is a bullshit type used to convert
+	http.Handle("/dog/", http.HandlerFunc(dogRoute))
 
-	mux.HandleFunc("/", rootRoute)
-	mux.HandleFunc("/dog/", dogRoute)
-
-	http.ListenAndServe(":8080", mux)
+	http.ListenAndServe(":8080", nil)
 }
 
 func rootRoute(res http.ResponseWriter, req *http.Request) {
