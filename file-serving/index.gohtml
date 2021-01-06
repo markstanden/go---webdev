@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title> File Server </title>
+</head>
+<body>
+<ul>
+{{range .}}
+<li>
+<h2>{{.Title}}</h2>
+<h3>{{.SubTitle}}</h3>
+Text:
+<h3>{{.Text}}</h3>
+<img src="{{.ImagePath}}">
+</li>
+{{end}}
+</ul>
+</body>
