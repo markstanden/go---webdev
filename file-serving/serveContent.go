@@ -18,11 +18,11 @@ var data []info
 
 func main() {
 	
-	infoMain := info{"FileServer", "Using the ServeContent method", "Here is a picture of something", "./index.jpeg"}
+	infoMain := info{"FileServer", "Using the ServeContent method", "Here is a picture of something", "/index.jpeg"}
 	data = append(data, infoMain)
 
 	http.HandleFunc("/", index)
-	http.HandleFunc("/index.jpg", indexHero)
+	http.HandleFunc("/index.jpeg", indexHero)
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		fmt.Println("Error starting server", err)
