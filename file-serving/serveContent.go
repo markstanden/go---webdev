@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"os"
 )
 
 type info struct{
@@ -37,7 +36,9 @@ func index(resW http.ResponseWriter, req *http.Request) {
 	tmp.Execute(resW, data)
 }
 
-func indexHero(resW http.ResponseWriter, req *http.Request) {
+func indexHero(res http.ResponseWriter, req *http.Request) {
+	
+	/* 
 	file, err := os.Open("./index.jpeg")
 	if err != nil {
 		fmt.Println("Error opening File", err)
@@ -52,5 +53,8 @@ func indexHero(resW http.ResponseWriter, req *http.Request) {
 	fmt.Printf("File Info\nName:\t%v\nSize:\t%v\nModified:\t%v\n", f.Name(), f.Size(), f.ModTime())
 
 	http.ServeContent(resW, req, f.Name(), f.ModTime(), file)
+	*/
+
+	http.ServeFile(res, req, "./index.jpeg")
 }
 
