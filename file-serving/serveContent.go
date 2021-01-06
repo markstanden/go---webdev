@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"html/template"
-	"io"
 	"net/http"
 	"os"
 )
@@ -38,12 +37,20 @@ func index(resW http.ResponseWriter, req *http.Request) {
 	tmp.Execute(resW, data)
 }
 
-func indexHero(resW http.ResponseWriter, *http.Request) {
+func indexHero(resW http.ResponseWriter, req *http.Request) {
 	file, err := os.Open("./index.jpeg")
 	if err != nil {
 		fmt.Println("Error opening File", err)
 	}
-	defer (file.Close())
-	io.Copy(resW, file)
+	defer file.Close()
+
+	f, err := file.Stat()
+	if err != nil {
+		fmt.Println("Error statting file", err)
+	}
+
+	fmt.Printf("File Info\nName:\t%v\nSize:\t%v\nModified:\t%v\n", f.Name(), f.Size(), f.ModTime())
+
+	http.ServeContent(resW, req, f.Name(), f.ModTime(), file)
 }
 
