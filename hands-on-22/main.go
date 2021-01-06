@@ -42,7 +42,7 @@ var hotelList = []hotel{
 }
 
 func main() {
-	http.Handle("/", http.HandlerFunc(rootRoute)) //HandlerFunc is a bullshit type used to convert
+	http.Handle("/", http.HandlerFunc(rootRoute)) //HandlerFunc is a conversion type used to convert from HandleFunc() functions to http.Handler types
 	http.Handle("/dog/", http.HandlerFunc(dogRoute))
 
 	http.ListenAndServe(":8080", nil)
