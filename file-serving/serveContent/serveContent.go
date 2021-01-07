@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"os"
 )
 
 type info struct{
@@ -17,11 +18,11 @@ var data []info
 
 func main() {
 	
-	infoMain := info{"FileServer", "Using the ServeContent method", "Here is a picture of something", "/index.jpeg"}
+	infoMain := info{"FileServer", "Using the ServeContent method", "Here is a picture of something", "/assets/index.jpeg"}
 	data = append(data, infoMain)
 
 	http.HandleFunc("/", index)
-	http.HandleFunc("/index.jpeg", indexHero)
+	http.HandleFunc("/assets/index.jpeg", indexHero)
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		fmt.Println("Error starting server", err)
@@ -29,7 +30,7 @@ func main() {
 }
 
 func index(resW http.ResponseWriter, req *http.Request) {
-	tmp, err := template.ParseFiles("./index.gohtml")
+	tmp, err := template.ParseFiles("../assets/index.gohtml")
 	if err != nil {
 		fmt.Println("Error loading html template", err)
 	}
@@ -37,9 +38,8 @@ func index(resW http.ResponseWriter, req *http.Request) {
 }
 
 func indexHero(res http.ResponseWriter, req *http.Request) {
-	
-	/* 
-	file, err := os.Open("./index.jpeg")
+
+	file, err := os.Open("../assets/index.jpeg")
 	if err != nil {
 		fmt.Println("Error opening File", err)
 	}
@@ -52,9 +52,6 @@ func indexHero(res http.ResponseWriter, req *http.Request) {
 
 	fmt.Printf("File Info\nName:\t%v\nSize:\t%v\nModified:\t%v\n", f.Name(), f.Size(), f.ModTime())
 
-	http.ServeContent(resW, req, f.Name(), f.ModTime(), file)
-	*/
-
-	http.ServeFile(res, req, "./index.jpeg")
+	http.ServeContent(res, req, f.Name(), f.ModTime(), file)
 }
 
