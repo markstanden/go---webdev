@@ -41,13 +41,15 @@ func indexHero(res http.ResponseWriter, req *http.Request) {
 
 	file, err := os.Open("../assets/index.jpeg")
 	if err != nil {
-		fmt.Println("Error opening File", err)
+		http.Error(res, "File Not Found", http.StatusNotFound)
+		return
 	}
 	defer file.Close()
 
 	f, err := file.Stat()
 	if err != nil {
-		fmt.Println("Error statting file", err)
+		http.Error(res, "File Not Found", http.StatusNotFound)
+		return
 	}
 
 	fmt.Printf("File Info\nName:\t%v\nSize:\t%v\nModified:\t%v\n", f.Name(), f.Size(), f.ModTime())
