@@ -17,7 +17,7 @@ var data []info
 
 func main() {
 	
-	infoMain := info{"FileServer", "Using the ServeContent method", "Here is a picture of something", "/index.jpeg"}
+	infoMain := info{"FileServer", "Using the FileServer method", "Here is a picture of something", "/index.jpeg"}
 	data = append(data, infoMain)
 
 	http.Handle("/", http.FileServer(http.Dir("../assets")))
@@ -34,10 +34,5 @@ func index(res http.ResponseWriter, req *http.Request) {
 		fmt.Println("Error loading html template", err)
 	}
 	tmp.Execute(res, data)
-}
-
-func indexHero(res http.ResponseWriter, req *http.Request) {
-	
-	http.ServeFile(res, req, "../assets/index.jpeg")
 }
 

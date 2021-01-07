@@ -17,27 +17,22 @@ var data []info
 
 func main() {
 	
-	infoMain := info{"FileServer", "Using the ServeFile method", "Here is a picture of something", "/assets/index.jpeg"}
+	infoMain := info{"FileServer", "Using the StripPrefix and FileServer method", "Here is a picture of something", "/assets/index.jpeg"}
 	data = append(data, infoMain)
 
+	http.Handle("/assets", http.StripPrefix("/assets", http.FileServer(http.Dir("../assets"))))
 	http.HandleFunc("/", index)
-	http.HandleFunc("/assets/index.jpeg", indexHero)
 	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		fmt.Println("Error starting server", err)
 	}
 }
 
-func index(resW http.ResponseWriter, req *http.Request) {
+func index(res http.ResponseWriter, req *http.Request) {
 	tmp, err := template.ParseFiles("../assets/index.gohtml")
 	if err != nil {
 		fmt.Println("Error loading html template", err)
 	}
-	tmp.Execute(resW, data)
-}
-
-func indexHero(res http.ResponseWriter, req *http.Request) {
-
-	http.ServeFile(res, req, "../assets/index.jpeg")
+	tmp.Execute(res, data)
 }
 
